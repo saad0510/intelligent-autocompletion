@@ -2,7 +2,7 @@
 # ASM Copilot
 
 An intelligent auto completion service which helps a 
-programmer in autocompleting a code snippets. While the
+programmer in autocompleting code snippets. While the
 programmer is still typing, the pilot calculates what
 the user is trying to type and suggests a set of most
 relevant auto completion.
@@ -11,7 +11,7 @@ We design a simple analysis that extracts sequences of
 keywords from a large codebase, and indexs them.
 We then use an information retriveval technique to
 find the highest ranked suggestions and use them
-to synthesize a code completion
+to synthesize a code completion.
 
 ## Dependencies
 
@@ -20,13 +20,17 @@ Therefore, the project can only be compiled to windows machines
 that support this library. 
 
 The version of GNU compiler should be atleast `9.0`
-to support `C++17`. We have the latest version to
-support the `<filesystem>` standard library.  
+to support `C++17`. We have used the latest version to
+find support for `<filesystem>` standard library.  
+
 ## Dataset
 
 The dataset consists of sets of code snippets of
 projects from different GitHub repositories. 
 It was downloaded from https://zenodo.org/record/3472050#.YbNU1b1Bzcd.
+
+> When using any dataset, make sure that the file names do not contain any extension.
+
 ## Working
 
 ![working](./images/working.png)
@@ -46,7 +50,7 @@ number of lines of occurences in each document etc.
 
 As mentioned above, we have used trie data structure
 to store the tokens instead of a linked list. The reason 
-is obvious, tries have very low searching complexity. If
+is simple, tries have very low searching complexity. If
 _n_ is the length of string to search, then the complexity
 will be _O(n)_ .
 
@@ -75,15 +79,14 @@ documents
 
 ## Autocompletion
 
-When ask the user to enter a line to autocomple.
-We use the last two words only to compute a result.
-The 2nd last word is termed as the _context_, while the
+We ask the user to enter a line to autocomple and use the last two words only to compute a result.
+The second last word is termed as the _context_, while the
 last term is the _query_.
 We first retrieve top relevant documents of both the
 context and the query, then we rank those documents 
 that contain both of these tokens.
 Then we print only those lines in which both of these
-words occure together, if possible. Otherwise, we display
+words occur together, if possible. Otherwise, we display
 only the lines containing the query.
 
 
@@ -140,6 +143,7 @@ For a detailed explanation of everything, refer to this [report.](./Report.pdf).
 ## Last Updated
 
 December, 2021
+
 ## Authors
 
 - github : [@saad0510](https://www.github.com/saad0510)
