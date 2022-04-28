@@ -1,0 +1,72 @@
+#include "Indexer/Indexer.hpp"
+
+#include <iostream>
+#include <filesystem>
+#include <time.h>
+#include <windows.h>
+using namespace std;
+
+unsigned countFiles{0};
+bool go{true};
+
+// thread which prints the indexing results on screen
+DWORD WINAPI printCount(LPVOID lpParam)
+{
+    CONSOLE_CURSOR_INFO info;
+
+    info.dwSize = 100;
+    info.bVisible = FALSE;
+    COORD origin = {0, 0};
+    HANDLE stdH = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    SetConsoleCursorInfo(stdH, &info);
+
+    while (go)
+    {
+        printf("%.1f percent", (100.0 * countFiles) / TOTAL);
+        SetConsoleCursorPosition(stdH, origin);
+    }
+    ExitThread(0);
+}
+
+int main()
+{
+    const char *datasetDir = "./dataset";
+    const char *resultFile = "./index.txt";
+
+    // start printing thread:
+    countFiles = 0;
+    HANDLE hThread = CreateThread(0, 0, printCount, 0, 0, 0);
+
+    // start timer:
+    time_t begin, end;
+    time(&begin);
+
+    unsigned id;
+    Indexer indexer;
+
+    // iterate in all files:
+    for (const auto &entry : filesystem::directory_iterator(datasetDir))
+    {
+        const string &filenameStr = entry.path().filename().string();
+        id = stoi(filenameStr.substr(0, filenameStr.length() - 4));
+
+        // index the file
+        indexer.index((datasetDir + filenameStr).c_str(), id);
+        countFiles++;
+    }
+
+    // stop timer:
+    time(&end);
+    printf("\nTime measured: %d seconds.\n", end - begin);
+    go = false; // indexing completed
+
+    // write the inverted index on given file
+    indexer.write_on(resultFile);
+
+    // exit:
+    CloseHandle(hThread);
+    fflush(stdin);
+    system("pause");
+    return 0;
+}
